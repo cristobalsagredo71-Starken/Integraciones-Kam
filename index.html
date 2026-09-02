@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="es" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Starken | Maestro KAM</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <div class="app-container">
+        <header class="header">
+
+            <div style="display: flex; gap: 1rem; align-items: center; position: absolute; right: 2rem; top: 2rem;">
+                <button id="theme-toggle" class="btn-icon tooltip-container" onclick="toggleTheme()" style="background: var(--panel-bg); border: 1px solid var(--panel-border); padding: 0.5rem; border-radius: 50%;">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
+                    <span class="tooltip-text" style="bottom:-30px;">Tema Claro/Oscuro</span>
+                </button>
+            </div>
+
+            <div class="logo">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" stroke="#ef4444" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+                <h1>Maestro Integraciones KAM</h1>
+            </div>
+            <div class="header-stats">
+                <div class="stat-card">
+                    <span class="stat-value" id="total-integrations">0</span>
+                    <span class="stat-label">Total Integraciones</span>
+                </div>
+                <div class="stat-card blocked">
+                    <span class="stat-value" id="total-blocked">0</span>
+                    <span class="stat-label">Bloqueadas</span>
+                </div>
+            </div>
+        </header>
+
+        <main class="main-content">
+                        
+      <div class="toolbar" style="display: flex; gap: 1rem; align-items: center; padding: 1.5rem 2rem; background: var(--panel-bg); border-bottom: var(--border-width) solid var(--panel-border);">
+          <div style="flex: 1;">
+              <select id="kam-selector" class="form-control" style="width: 300px; font-size: 1.1rem; padding: 0.75rem;">
+                  <option value="ALL">Visualizando a todos los KAMs (Ver Todo)</option>
+              </select>
+          </div>
+          <div style="font-size: 0.9rem; color: var(--text-muted); display: flex; gap: 1rem;">
+              <span style="display: flex; align-items: center; gap: 4px;"><span style="display: inline-block; width: 10px; height: 10px; border-radius: 50%; background: var(--danger);"></span> Pelota en Cliente</span>
+              <span style="display: flex; align-items: center; gap: 4px;"><span style="display: inline-block; width: 10px; height: 10px; border-radius: 50%; background: var(--warning);"></span> En Negociación</span>
+              <span style="display: flex; align-items: center; gap: 4px;"><span style="display: inline-block; width: 10px; height: 10px; border-radius: 50%; background: var(--info);"></span> Pelota en Starken TI</span>
+          </div>
+      </div>
+
+
+      <!-- VISTA CONDUCTOR REGULAR -->
+      <div class="table-container" id="view-metricas" style="display: none; padding: 2rem;">
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 3rem;">
+                <div>
+                    <h3 style="font-family: 'Playfair Display', serif; margin-bottom: 1.5rem; color: var(--text-main); border-bottom: 1px dashed var(--panel-border); padding-bottom: 0.5rem;">Facturación Promedio por Cliente</h3>
+                    <canvas id="chartRevenue"></canvas>
+                </div>
+                <div>
+                    <h3 style="font-family: 'Playfair Display', serif; margin-bottom: 1.5rem; color: var(--text-main); border-bottom: 1px dashed var(--panel-border); padding-bottom: 0.5rem;">Volumen (OFs) por Cliente</h3>
+                    <canvas id="chartVolume"></canvas>
+                </div>
+            </div>
+        </div>
+        <div id="view-conductor" style="display: none; padding-top: 1rem;">
+          <h2 style="color: var(--text-primary); margin-bottom: 1rem;">Conductor Regular (Flujos PMO)</h2>
+          <div class="panel" style="padding: 2rem;">
+              <p style="color: var(--text-muted); margin-bottom: 1.5rem;">Repositorio de flujos operativos y manuales transversales de la PMO.</p>
+              <div id="conductor-grid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 1rem;">
+                  <!-- Tarjetas de flujos se inyectarán aquí -->
+              </div>
+          </div>
+      </div>
+      </main>
+    </div>
+
+        <!-- Modal Cliente -->
+    <div class="modal-overlay" id="modal-client">
+        <div class="modal-content glass-panel">
+            <div class="modal-header">
+                <h2 id="modal-client-title">Nuevo Cliente</h2>
+                <button class="close-btn" id="btn-close-client-modal">&times;</button>
+            </div>
+            <form id="client-form">
+                <div class="form-section">
+                    <h3>Datos del Cliente</h3>
+                    <div class="form-grid full-width" style="gap: 1rem;">
+                        <div class="form-group" id="client-name-group">
+                            <label>Razón Social / Nombre</label>
+                            <input type="text" id="input-client-name" required placeholder="Ej: Walmart">
+                        </div>
+                        <div class="form-group">
+                            <label>Sponsor Comercial (KAM)</label>
+                            <input type="text" id="input-client-sponsor">
+                        </div>
+                        <div class="form-group full-width">
+                            <label>Atributos Especiales (Banderitas)</label>
+                            <div class="checkbox-group">
+                                <label><input type="checkbox" id="tag-dispatch" value="Dispatch"> Dispatch</label>
+                                <label><input type="checkbox" id="tag-vtex" value="VTEX"> VTEX</label>
+                                <label><input type="checkbox" id="tag-shopify" value="Shopify"> Shopify</label>
+                            </div>
+                        </div>
+                        <div class="form-group full-width">
+                            <label>Documentación General del Cliente (Links)</label>
+                            <textarea id="input-client-docs" rows="2" placeholder="Ej: Link a contratos..."></textarea>
+                        </div>
+                        <div class="form-group full-width">
+                            <label>Archivo Adjunto (Opcional - Puedes seleccionar varios)</label>
+                            <input type="file" id="input-client-file" multiple style="padding: 0.5rem; background: rgba(0,0,0,0.2);">
+                            <div id="client-file-link" style="margin-top: 0.5rem; font-size: 0.85rem;"></div>
+                        </div>
+                        <div class="form-group">
+                            <label>Volumen Mensual Promedio (OFs)</label>
+                            <input type="number" id="input-volume">
+                        </div>
+                        <div class="form-group">
+                            <label>Facturación Mensual Promedio (CLP)</label>
+                            <input type="number" id="input-revenue">
+                        </div>
+                        
+                        <div class="form-group full-width" style="margin-top: 1rem;">
+                            <h4>Histórico Mensual del Cliente</h4>
+                            <div class="form-grid" style="align-items: end; margin-bottom: 1rem;">
+                                <div class="form-group">
+                                    <label>Mes</label>
+                                    <input type="month" id="input-hist-month">
+                                </div>
+                                <div class="form-group">
+                                    <label>OFs del Mes</label>
+                                    <input type="number" id="input-hist-volume">
+                                </div>
+                                <div class="form-group">
+                                    <label>Facturación (CLP)</label>
+                                    <input type="number" id="input-hist-revenue">
+                                </div>
+                                <div class="form-group">
+                                    <button type="button" class="btn-secondary" id="btn-add-history" style="width: 100%; border-color: var(--info); color: var(--info);">+ Mes</button>
+                                </div>
+                            </div>
+                            <table class="data-grid" style="font-size: 0.8rem;">
+                                <thead><tr><th>Mes</th><th>OFs</th><th>Facturación</th><th></th></tr></thead>
+                                <tbody id="history-grid-body"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-actions">
+                    <button type="button" class="btn-secondary" id="btn-cancel-client">Cancelar</button>
+                    <button type="submit" class="btn-primary">Guardar Cliente</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal Pedida -->
+    <div class="modal-overlay" id="modal-initiative">
+        <div class="modal-content glass-panel">
+            <div class="modal-header">
+                <h2 id="modal-init-title">Nueva Iniciativa</h2>
+                <button class="close-btn" id="btn-close-init-modal">&times;</button>
+            </div>
+            <form id="initiative-form">
+                <div class="form-section">
+                    <h3>1. Cliente Asociado</h3>
+                    <div class="form-group full-width">
+                        <label>Seleccionar Cliente</label>
+                        <select id="input-init-client-select" required>
+                            <option value="">-- Selecciona un cliente --</option>
+                            <!-- Clientes JS -->
+                        </select>
+                        <small style="color: var(--text-muted); display: block; margin-top: 0.5rem;">
+                            Si el cliente no existe, créalo primero desde la pestaña "Directorio Clientes".
+                        </small>
+                    </div>
+                </div>
+
+                <div class="form-section">
+                    <h3>2. Detalles de la Pedida</h3>
+                    <div class="form-grid">
+                                                <div class="form-group full-width">
+                            <label>Nombre de la Pedida</label>
+                            <input type="text" id="input-name" required placeholder="Ej: Integración LI">
+                        </div>
+                        <div class="form-group full-width">
+                            <label>Link a Ticket de Jira (Opcional)</label>
+                            <input type="url" id="input-jira-url" placeholder="Ej: https://starken.atlassian.net/browse/PRY-123">
+                        </div>
+                                                <div class="form-group full-width">
+                            <label>Link de Confluence (Opcional)</label>
+                            <input type="url" id="input-confluence-link" placeholder="Ej: https://starken.atlassian.net/wiki/spaces/...">
+                        </div>
+                        <div class="form-group full-width">
+                            <label>Documentación Específica (Links)</label>
+                            <textarea id="input-documentation" rows="2" placeholder="Ej: Swagger, manuales técnicos de la pedida..."></textarea>
+                        </div>
+                        <div class="form-group full-width">
+                            <label>Archivo Adjunto (Opcional - Puedes seleccionar varios)</label>
+                            <input type="file" id="input-init-file" multiple style="padding: 0.5rem; background: rgba(0,0,0,0.2);">
+                            <div id="init-file-link" style="margin-top: 0.5rem; font-size: 0.85rem;"></div>
+                        </div>
+                        <div class="form-group">
+                            <label>Prioridad (1-5)</label>
+                            <select id="input-priority">
+                                <option value="0">(Sin prioridad)</option>
+                                <option value="1">1 - Muy Baja</option>
+                                <option value="2">2 - Baja</option>
+                                <option value="3">3 - Media</option>
+                                <option value="4">4 - Alta</option>
+                                <option value="5">5 - Crítica ??</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Modelo Operación</label>
+                            <select id="input-model">
+                                <option value="POR DEFINIR">(Por definir)</option>
+                                <option value="INHOUSE">Inhouse</option>
+                                <option value="RETIRO">Retiro Cliente</option>
+                                <option value="SUCURSAL">Sucursal</option>
+                                <option value="MIXTO">Mixto</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-section">
+                    <h3>3. Esfuerzo Técnico</h3>
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label>Tipo de Integración</label>
+                            <select id="input-type">
+                                <option value="POR DEFINIR">(Por definir)</option>
+                                <option value="NATIVA_API">Nativa / API REST</option>
+                                <option value="VTEX">VTEX</option>
+                                <option value="SHOPIFY">Shopify</option>
+                                <option value="MULTICOURIER">Multicourier</option>
+                                <option value="CUSTOM">A medida</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Complejidad</label>
+                            <select id="input-complexity">
+                                <option value="POR DEFINIR">(Por definir)</option>
+                                <option value="BAJA">Baja</option>
+                                <option value="MEDIA">Media</option>
+                                <option value="ALTA">Alta</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>HH Estimadas (TI)</label>
+                            <input type="number" id="input-hh">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-section">
+                    <h3>4. Estado y Destrabe</h3>
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label>Fase Actual</label>
+                            <select id="input-phase">
+                                <option value="POR DEFINIR">(Por definir)</option>
+                                <option value="EVALUACION">Evaluación Comercial</option>
+                                <option value="DISCOVERY">Discovery</option>
+                                <option value="DISENO">Diseño</option>
+                                <option value="IMPLEMENTACION">Implementación</option>
+                                <option value="QA">QA / Certificación</option>
+                                <option value="GO_LIVE">Go Live</option>
+                                <option value="STANDBY">Standby / Bloqueado</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Responsable</label>
+                            <select id="input-owner">
+                                <option value="POR DEFINIR">(Por definir)</option>
+                                <option value="CLIENTE">Cliente</option>
+                                <option value="COMERCIAL">Comercial</option>
+                                <option value="TI">TI</option>
+                                <option value="PROYECTOS">Proyectos</option>
+                            </select>
+                        </div>
+                        <div class="form-group full-width">
+                            <label>Cuello de Botella / Motivo Bloqueo</label>
+                            <textarea id="input-bottleneck" rows="2" placeholder="Ej: Esperando endpoint del cliente..."></textarea>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="form-actions">
+                    <button type="button" class="btn-secondary" id="btn-cancel-init">Cancelar</button>
+                    <button type="submit" class="btn-primary">Guardar Iniciativa</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    <!-- SDK Supabase -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="app.js"></script>
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
