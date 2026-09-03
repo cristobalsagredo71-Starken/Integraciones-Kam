@@ -90,12 +90,13 @@ function renderKamSelector() {
 }
 
 function getResponsable(init) {
-    if (init.phase === 'EN_PRODUCCION') return { who: 'Completado', color: 'var(--success)' };
-    if (!init.bottleneck) return { who: 'Starken TI', color: 'var(--info)' };
+    if (init.phase === 'EN_PRODUCCION' || init.phase === 'GO_LIVE') return { who: 'Completado', color: 'var(--success)' };
     
-    const b = init.bottleneck.toLowerCase();
-    if (b.includes('cliente') || b.includes('proveedor')) return { who: 'Cliente / Proveedor', color: 'var(--danger)' };
-    if (b.includes('comercial') || b.includes('kam')) return { who: 'KAM (Negociación)', color: 'var(--warning)' };
+    const owner = (init.owner || '').toUpperCase();
+    if (owner === 'CLIENTE') return { who: 'Responsabilidad Cliente', color: 'var(--danger)' };
+    if (owner === 'COMERCIAL' || owner === 'KAM') return { who: 'En Negociación', color: 'var(--warning)' };
+    if (owner === 'TI' || owner === 'PROYECTOS') return { who: 'Responsabilidad Starken TI', color: 'var(--info)' };
+    
     return { who: 'Starken TI', color: 'var(--info)' };
 }
 
