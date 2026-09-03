@@ -139,7 +139,7 @@ function renderKamCards() {
             </div>
             
             <button class="btn" style="margin-top: auto; width: 100%; justify-content: center;" onclick="openKamModal('${init.id}')">
-                Ver Detalles / Responder PMO
+                Ver Detalles y Bitácora
             </button>
         `;
         container.appendChild(card);
@@ -180,7 +180,7 @@ function renderAlertas() {
             <div style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 0.25rem;">${al.log.date} - <b>${al.clientName} (${al.initName})</b></div>
             <div style="color: var(--text-main);">${al.log.text}</div>
             <button class="btn-icon tooltip-container" style="margin-top: 0.5rem; border:1px solid var(--danger); padding:4px 8px; border-radius:4px; font-size:0.8rem; color:var(--danger);" onclick="openKamModal('${al.initId}')">
-                Responder a PMO
+                Ver Detalles
             </button>
         `;
         container.appendChild(el);
