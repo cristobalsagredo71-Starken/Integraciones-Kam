@@ -1,4 +1,12 @@
 
+window.addEventListener('error', function(e) {
+    document.body.innerHTML = `<div style="background:red; color:white; padding:20px; z-index:9999; position:absolute; top:0; left:0; width:100%;"><b>Global Error:</b> ${e.message}<br>${e.filename}:${e.lineno}</div>` + document.body.innerHTML;
+});
+window.addEventListener('unhandledrejection', function(e) {
+    document.body.innerHTML = `<div style="background:red; color:white; padding:20px; z-index:9999; position:absolute; top:0; left:0; width:100%;"><b>Unhandled Promise Rejection:</b> ${e.reason}</div>` + document.body.innerHTML;
+});
+
+
 function updateStats() {
     const total = initiativesData.length;
     const blocked = initiativesData.filter(i => i.phase === 'BLOQUEADO').length;
