@@ -93,11 +93,12 @@ function getResponsable(init) {
     if (init.phase === 'EN_PRODUCCION' || init.phase === 'GO_LIVE') return { who: 'Completado', color: 'var(--success)' };
     
     const owner = (init.owner || '').toUpperCase();
-    if (owner === 'CLIENTE') return { who: 'Responsabilidad Cliente', color: 'var(--danger)' };
-    if (owner === 'COMERCIAL' || owner === 'KAM') return { who: 'En Negociación', color: 'var(--warning)' };
-    if (owner === 'TI' || owner === 'PROYECTOS') return { who: 'Responsabilidad Starken TI', color: 'var(--info)' };
+    if (owner === 'CLIENTE') return { who: 'Cliente', color: 'var(--danger)' };
+    if (owner === 'COMERCIAL') return { who: 'Comercial', color: 'var(--warning)' };
+    if (owner === 'TI') return { who: 'TI', color: 'var(--info)' };
+    if (owner === 'PROYECTOS') return { who: 'Proyectos', color: 'var(--info)' };
     
-    return { who: 'Starken TI', color: 'var(--info)' };
+    return { who: 'Por definir', color: 'var(--text-muted)' };
 }
 
 function renderKamCards() {
