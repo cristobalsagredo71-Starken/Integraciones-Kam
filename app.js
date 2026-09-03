@@ -125,7 +125,7 @@ function renderKamCards() {
         card.innerHTML = `
             <div style="display: flex; justify-content: space-between; align-items: flex-start;">
                 <div>
-                    <div style="font-size: 0.75rem; color: var(--text-muted); font-family: 'JetBrains Mono', monospace; margin-bottom: 0.25rem;">${init.system}</div>
+                    
                     <h3 style="margin: 0; font-family: 'Playfair Display', serif; color: var(--text-main); font-size: 1.3rem;">${init.name}</h3>
                     <div style="color: var(--text-muted); font-size: 0.9rem; margin-top: 0.25rem;">${init.clients ? init.clients.name : 'Sin Cliente'}</div>
                 </div>
