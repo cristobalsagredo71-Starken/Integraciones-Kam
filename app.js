@@ -198,8 +198,8 @@ let currentEditingInit = null;
 const modal = document.getElementById('modal-initiative');
 const btnClose = document.getElementById('btn-close-init-modal');
 
-btnClose.addEventListener('click', () => { modal.style.display = 'none'; });
-window.onclick = (e) => { if(e.target == modal) modal.style.display = 'none'; };
+btnClose.addEventListener('click', () => { modal.classList.remove('active'); });
+window.onclick = (e) => { if(e.target == modal) modal.classList.remove('active'); };
 
 window.openKamModal = (initId) => {
     currentEditingInit = initiativesData.find(i => i.id === initId);
@@ -209,7 +209,7 @@ window.openKamModal = (initId) => {
     document.getElementById('kam-init-bottleneck').textContent = currentEditingInit.bottleneck || 'Sin trabas reportadas por PMO.';
     
     renderModalLogs();
-    modal.style.display = 'flex';
+    modal.classList.add('active');
 };
 
 function renderModalLogs() {
