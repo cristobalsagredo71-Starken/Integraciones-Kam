@@ -135,9 +135,14 @@ function renderKamCards() {
                 </div>
             </div>
             
+            
             <div style="background: rgba(0,0,0,0.02); padding: 0.75rem; border-radius: 4px; border: 1px solid var(--panel-border);">
+                <div style="font-size: 0.85rem; font-weight: bold; color: var(--text-main); margin-bottom: 0.25rem;">
+                    📅 Fecha Estimada: <span style="font-weight: normal; color: var(--info);">${init.estimated_date || 'Por definir'}</span>
+                </div>
                 <div style="font-size: 0.9rem; color: ${init.bottleneck ? 'var(--danger)' : 'var(--text-main)'};">${init.bottleneck || 'Avanzando según SLA interno.'}</div>
             </div>
+
             
             <button class="btn" style="margin-top: auto; width: 100%; justify-content: center;" onclick="openKamModal('${init.id}')">
                 Ver Detalles y Bitácora
