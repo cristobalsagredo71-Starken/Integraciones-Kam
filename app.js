@@ -135,7 +135,6 @@ function renderKamCards() {
             </div>
             
             <div style="background: rgba(0,0,0,0.02); padding: 0.75rem; border-radius: 4px; border: 1px solid var(--panel-border);">
-                <div style="font-size: 0.75rem; color: var(--text-muted); margin-bottom: 0.25rem; font-weight: bold;">ESTADO ACTUAL: ${init.phase}</div>
                 <div style="font-size: 0.9rem; color: ${init.bottleneck ? 'var(--danger)' : 'var(--text-main)'};">${init.bottleneck || 'Avanzando según SLA interno.'}</div>
             </div>
             
@@ -201,7 +200,6 @@ window.openKamModal = (initId) => {
     if(!currentEditingInit) return;
     
     document.getElementById('modal-init-title').textContent = currentEditingInit.name + ' (' + (currentEditingInit.clients ? currentEditingInit.clients.name : '') + ')';
-    document.getElementById('kam-init-phase').textContent = currentEditingInit.phase;
     document.getElementById('kam-init-bottleneck').textContent = currentEditingInit.bottleneck || 'Sin trabas reportadas por PMO.';
     
     renderModalLogs();
@@ -228,34 +226,7 @@ function renderModalLogs() {
     `}).join('');
 }
 
-document.getElementById('btn-add-log').addEventListener('click', async () => {
-    const input = document.getElementById('input-log-text');
-    if(!input.value.trim() || !currentEditingInit) return;
-    
-    const now = new Date();
-    const dateStr = now.toISOString().split('T')[0] + ' ' + now.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
-    
-    const newLog = {
-        date: dateStr,
-        author: 'KAM (' + (selectedKam !== 'ALL' ? toTitleCase(selectedKam) : 'General') + ')',
-        text: input.value.trim()
-    };
-    
-    const updatedLogs = [newLog, ...(currentEditingInit.logs || [])];
-    
-    try {
-        const { error } = await client.from('initiatives').update({ logs: updatedLogs }).eq('id', currentEditingInit.id);
-        if (error) throw error;
-        
-        currentEditingInit.logs = updatedLogs;
-        input.value = '';
-        renderModalLogs();
-        renderAlertas();
-        updateStats(); // refresh alerts in case they answered one
-    } catch (e) {
-        alert("Error guardando el comentario: " + e.message);
-    }
-});
+
 
 // Theme Logic
 window.toggleTheme = () => {
