@@ -1,4 +1,16 @@
 
+function updateStats() {
+    const total = initiativesData.length;
+    const blocked = initiativesData.filter(i => i.phase === 'BLOQUEADO').length;
+    
+    const elTotal = document.getElementById('stat-total-inits');
+    const elBlocked = document.getElementById('stat-blocked-inits');
+    
+    if(elTotal) elTotal.textContent = total;
+    if(elBlocked) elBlocked.textContent = blocked;
+}
+
+
 const SUPABASE_URL = 'https://dzmsfxnvfardckddvzjt.supabase.co';
 const SUPABASE_KEY = 'sb_publishable_J0eJ5rRXzERV8RxiYk95sg_NTd8JWYN';
 const client = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
@@ -31,8 +43,9 @@ async function fetchData() {
         renderKamSelector();
         renderKamCards();
         renderAlertas();
+        updateStats();
     } catch (e) {
-        console.error("Error fetching data:", e);
+        console.error("Error fetching data:", e); document.getElementById("view-pedidas").innerHTML = `<p style="color:red">Error JS: ${e.message}</p>`;
     }
 }
 
@@ -50,10 +63,11 @@ function renderKamSelector() {
         selectedKam = e.target.value;
         renderKamCards();
         renderAlertas();
+        updateStats();
     });
 }
 
-function getBallInCourt(init) {
+function getResponsable(init) {
     if (init.phase === 'EN_PRODUCCION') return { who: 'Completado', color: 'var(--success)' };
     if (!init.bottleneck) return { who: 'Starken TI', color: 'var(--info)' };
     
@@ -77,7 +91,7 @@ function renderKamCards() {
     }
     
     filtered.forEach(init => {
-        const ball = getBallInCourt(init);
+        const resp = getResponsable(init);
         const hasAlert = init.logs && init.logs.some(l => l.text.includes('ALERTA COMERCIAL'));
         const alertBorder = hasAlert ? 'border: 2px solid var(--danger);' : 'border: 1px solid var(--panel-border);';
         
@@ -91,8 +105,8 @@ function renderKamCards() {
                     <h3 style="margin: 0; font-family: 'Playfair Display', serif; color: var(--text-main); font-size: 1.3rem;">${init.name}</h3>
                     <div style="color: var(--text-muted); font-size: 0.9rem; margin-top: 0.25rem;">${init.clients ? init.clients.name : 'Sin Cliente'}</div>
                 </div>
-                <div style="background: ${ball.color}22; color: ${ball.color}; padding: 4px 10px; border-radius: 20px; font-size: 0.75rem; font-weight: bold; border: 1px solid ${ball.color}; text-align: center; line-height: 1.2;">
-                    PELOTA EN:<br/>${ball.who}
+                <div style="background: ${resp.color}22; color: ${resp.color}; padding: 4px 10px; border-radius: 20px; font-size: 0.75rem; font-weight: bold; border: 1px solid ${resp.color}; text-align: center; line-height: 1.2;">
+                    RESPONSABLE:<br/>${resp.who}
                 </div>
             </div>
             
@@ -212,7 +226,8 @@ document.getElementById('btn-add-log').addEventListener('click', async () => {
         currentEditingInit.logs = updatedLogs;
         input.value = '';
         renderModalLogs();
-        renderAlertas(); // refresh alerts in case they answered one
+        renderAlertas();
+        updateStats(); // refresh alerts in case they answered one
     } catch (e) {
         alert("Error guardando el comentario: " + e.message);
     }
