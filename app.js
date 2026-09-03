@@ -26,6 +26,22 @@ const client = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 let initiativesData = [];
 let clientsData = [];
 let kamsList = new Set();
+
+function normalizeKamName(name) {
+    if (!name) return '';
+    // Elimina tildes y pasa a mayuscula para normalizar
+    return name.normalize("NFD").replace(/[̀-ͯ]/g, "").toUpperCase().trim();
+}
+
+function toTitleCase(str) {
+    return str.replace(
+        /\w\S*/g,
+        function(txt) {
+            return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
+        }
+    );
+}
+
 let selectedKam = 'ALL';
 
 async function fetchData() {
@@ -45,7 +61,7 @@ async function fetchData() {
         kamsList.clear();
         clientsData.forEach(c => {
             if (c.sponsor && c.sponsor.trim() !== '') {
-                kamsList.add(c.sponsor.trim());
+                kamsList.add(normalizeKamName(c.sponsor));
             }
         });
         renderKamSelector();
@@ -63,7 +79,7 @@ function renderKamSelector() {
     [...kamsList].sort().forEach(kam => {
         const opt = document.createElement('option');
         opt.value = kam;
-        opt.textContent = '👤 ' + kam;
+        opt.textContent = '👤 ' + toTitleCase(kam);
         sel.appendChild(opt);
     });
     sel.value = selectedKam;
@@ -91,7 +107,7 @@ function renderKamCards() {
     
     const filtered = selectedKam === 'ALL' 
         ? initiativesData 
-        : initiativesData.filter(i => i.clients && i.clients.sponsor === selectedKam);
+        : initiativesData.filter(i => i.clients && normalizeKamName(i.clients.sponsor) === selectedKam);
         
     if (filtered.length === 0) {
         container.innerHTML = '<p style="color:var(--text-muted);">No hay integraciones activas para este KAM.</p>';
@@ -138,7 +154,7 @@ function renderAlertas() {
     
     const filtered = selectedKam === 'ALL' 
         ? initiativesData 
-        : initiativesData.filter(i => i.clients && i.clients.sponsor === selectedKam);
+        : initiativesData.filter(i => i.clients && normalizeKamName(i.clients.sponsor) === selectedKam);
         
     const alertas = [];
     filtered.forEach(init => {
@@ -221,7 +237,7 @@ document.getElementById('btn-add-log').addEventListener('click', async () => {
     
     const newLog = {
         date: dateStr,
-        author: 'KAM (' + (selectedKam !== 'ALL' ? selectedKam : 'General') + ')',
+        author: 'KAM (' + (selectedKam !== 'ALL' ? toTitleCase(selectedKam) : 'General') + ')',
         text: input.value.trim()
     };
     
