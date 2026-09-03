@@ -7,12 +7,12 @@ window.addEventListener('unhandledrejection', function(e) {
 });
 
 
-function updateStats() {
-    const total = initiativesData.length;
-    const blocked = initiativesData.filter(i => i.phase === 'BLOQUEADO').length;
+function updateStats(filteredData) {
+    const total = filteredData.length;
+    const blocked = filteredData.filter(i => i.phase === 'STANDBY' || i.phase === 'BLOQUEADO').length;
     
-    const elTotal = document.getElementById('stat-total-inits');
-    const elBlocked = document.getElementById('stat-blocked-inits');
+    const elTotal = document.getElementById('total-integrations');
+    const elBlocked = document.getElementById('total-blocked');
     
     if(elTotal) elTotal.textContent = total;
     if(elBlocked) elBlocked.textContent = blocked;
@@ -67,7 +67,6 @@ async function fetchData() {
         renderKamSelector();
         renderKamCards();
         renderAlertas();
-        updateStats();
     } catch (e) {
         console.error("Error fetching data:", e); document.getElementById("view-pedidas").innerHTML = `<p style="color:red">Error JS: ${e.message}</p>`;
     }
@@ -87,7 +86,6 @@ function renderKamSelector() {
         selectedKam = e.target.value;
         renderKamCards();
         renderAlertas();
-        updateStats();
     });
 }
 
@@ -109,6 +107,7 @@ function renderKamCards() {
         ? initiativesData 
         : initiativesData.filter(i => i.clients && normalizeKamName(i.clients.sponsor) === selectedKam);
         
+    updateStats(filtered);
     if (filtered.length === 0) {
         container.innerHTML = '<p style="color:var(--text-muted);">No hay integraciones activas para este KAM.</p>';
         return;
