@@ -59,11 +59,11 @@ async function fetchData() {
 
 function renderKamSelector() {
     const sel = document.getElementById('kam-selector');
-    sel.innerHTML = '<option value="ALL">Visualizando a todos los KAMs (Ver Todo)</option>';
+    sel.innerHTML = '<option value="ALL">👁️ Visualizar Todos (Sin Filtro)</option>';
     [...kamsList].sort().forEach(kam => {
         const opt = document.createElement('option');
         opt.value = kam;
-        opt.textContent = 'KAM: ' + kam;
+        opt.textContent = '👤 ' + kam;
         sel.appendChild(opt);
     });
     sel.value = selectedKam;
