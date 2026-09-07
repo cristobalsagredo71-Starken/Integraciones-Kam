@@ -201,15 +201,23 @@ const btnClose = document.getElementById('btn-close-init-modal');
 btnClose.addEventListener('click', () => { modal.classList.remove('active'); });
 window.onclick = (e) => { if(e.target == modal) modal.classList.remove('active'); };
 
+
 window.openKamModal = (initId) => {
-    currentEditingInit = initiativesData.find(i => i.id == initId);
-    if(!currentEditingInit) return;
-    
-    document.getElementById('modal-init-title').textContent = currentEditingInit.name + ' (' + (currentEditingInit.clients ? currentEditingInit.clients.name : '') + ')';
-    document.getElementById('kam-init-bottleneck').textContent = currentEditingInit.bottleneck || 'Sin trabas reportadas por PMO.';
-    
-    renderModalLogs();
-    modal.classList.add('active');
+    try {
+        currentEditingInit = initiativesData.find(i => i.id == initId);
+        if(!currentEditingInit) {
+            alert("No se encontro la iniciativa con id: " + initId);
+            return;
+        }
+        
+        document.getElementById('modal-init-title').textContent = currentEditingInit.name + ' (' + (currentEditingInit.clients ? currentEditingInit.clients.name : '') + ')';
+        document.getElementById('kam-init-bottleneck').textContent = currentEditingInit.bottleneck || 'Sin trabas reportadas por PMO.';
+        
+        renderModalLogs();
+        modal.classList.add('active');
+    } catch(e) {
+        alert("Error en openKamModal: " + e.message);
+    }
 };
 
 function renderModalLogs() {
