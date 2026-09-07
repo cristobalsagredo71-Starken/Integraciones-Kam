@@ -136,12 +136,32 @@ function renderKamCards() {
             </div>
             
             
+            
             <div style="background: rgba(0,0,0,0.02); padding: 0.75rem; border-radius: 4px; border: 1px solid var(--panel-border);">
                 <div style="font-size: 0.85rem; font-weight: bold; color: var(--text-main); margin-bottom: 0.25rem;">
-                    📅 Fecha Estimada: <span style="font-weight: normal; color: var(--info);">${init.estimated_date || 'Por definir'}</span>
+                    📅 Go Live: <span style="font-weight: normal; color: var(--info);">${init.estimated_date || 'Por definir'}</span>
                 </div>
-                <div style="font-size: 0.9rem; color: ${init.bottleneck ? 'var(--danger)' : 'var(--text-main)'};">${init.bottleneck || 'Avanzando según SLA interno.'}</div>
+                
+                <div style="font-size: 0.75rem; color: var(--text-muted); margin-bottom: 0.5rem; display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 4px;">
+                    <div>
+                        <b>Discovery:</b><br/>
+                        ${init.date_start_discovery ? init.date_start_discovery.slice(5) : '-'} a ${init.date_end_discovery ? init.date_end_discovery.slice(5) : '-'}
+                    </div>
+                    <div>
+                        <b>Diseño:</b><br/>
+                        ${init.date_start_design ? init.date_start_design.slice(5) : '-'} a ${init.date_end_design ? init.date_end_design.slice(5) : '-'}
+                    </div>
+                    <div>
+                        <b>Desarrollo:</b><br/>
+                        ${init.date_start_dev ? init.date_start_dev.slice(5) : '-'} a ${init.date_end_dev ? init.date_end_dev.slice(5) : '-'}
+                    </div>
+                </div>
+
+                <div style="font-size: 0.9rem; color: ${init.bottleneck ? 'var(--danger)' : 'var(--text-main)'}; border-top: 1px solid var(--panel-border); padding-top: 0.5rem;">
+                    ${init.bottleneck || 'Avanzando según SLA interno.'}
+                </div>
             </div>
+
 
             
             <button class="btn" style="margin-top: auto; width: 100%; justify-content: center;" onclick="openKamModal('${init.id}')">
