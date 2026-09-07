@@ -202,7 +202,7 @@ btnClose.addEventListener('click', () => { modal.classList.remove('active'); });
 window.onclick = (e) => { if(e.target == modal) modal.classList.remove('active'); };
 
 window.openKamModal = (initId) => {
-    currentEditingInit = initiativesData.find(i => i.id === initId);
+    currentEditingInit = initiativesData.find(i => i.id == initId);
     if(!currentEditingInit) return;
     
     document.getElementById('modal-init-title').textContent = currentEditingInit.name + ' (' + (currentEditingInit.clients ? currentEditingInit.clients.name : '') + ')';
