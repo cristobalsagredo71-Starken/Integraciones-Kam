@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="es" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Starken | Maestro KAM</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <header class="app-header">
+        <div class="header-inner">
+            <div class="header-brand">
+                <div class="logo-mark">S</div>
+                <h1>Starken <span>Integraciones</span></h1>
+                <span style="margin-left: 10px; font-size: 0.8rem; background: var(--surface-2); padding: 4px 8px; border-radius: 4px; border: 1px solid var(--border);">Portal KAM</span>
+            </div>
+            <div class="header-actions">
+                <button id="theme-toggle" class="btn-icon-round" onclick="toggleTheme()" title="Cambiar Tema">
+                    🌙
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <main class="app-main">
+        <div class="kpi-strip">
+            <div class="kpi-card accent-green">
+                <span class="kpi-value" id="kpi-total">0</span>
+                <span class="kpi-label">Total Integraciones</span>
+            </div>
+            <div class="kpi-card accent-blue">
+                <span class="kpi-value" id="kpi-active">0</span>
+                <span class="kpi-label">En Curso</span>
+            </div>
+            <div class="kpi-card accent-red">
+                <span class="kpi-value" id="kpi-blocked">0</span>
+                <span class="kpi-label">Bloqueadas / Standby</span>
+            </div>
+            <div class="kpi-card accent-yellow">
+                <span class="kpi-value" id="kpi-done">0</span>
+                <span class="kpi-label">En Producción</span>
+            </div>
+        </div>
+
+        <div class="tabs-bar">
+            <button class="tab-btn active" id="tab-btn-pedidas" onclick="switchTab('pedidas')">Estado de Integraciones</button>
+            <button class="tab-btn" id="tab-btn-kit" onclick="switchTab('kit')">Kit de Onboarding (Docs)</button>
+        </div>
+
+        <!-- VISTA: Integraciones -->
+        <div id="view-pedidas">
+            <div class="toolbar-row">
+                <select id="kam-selector">
+                    <option value="ALL">👁️ Visualizar Todas (Sin Filtro de KAM)</option>
+                </select>
+                <div class="toolbar-legend">
+                    <span><span class="dot dot-client"></span> Cliente</span>
+                    <span><span class="dot dot-comercial"></span> Comercial</span>
+                    <span><span class="dot dot-ti"></span> TI / Proyectos</span>
+                    <span><span class="dot dot-done"></span> Finalizado</span>
+                </div>
+            </div>
+
+            <div class="alerts-banner" id="alerts-banner" style="display: none;">
+                <h3>🔥 Alertas Comerciales Urgentes</h3>
+                <div id="alerts-container"></div>
+            </div>
+
+            <div class="cards-grid" id="pedidas-container">
+                <!-- Tarjetas Inyectadas por JS -->
+            </div>
+        </div>
+
+        <!-- VISTA: Kit de Onboarding -->
+        <div id="view-kit" style="display: none;">
+            <div class="kit-hero">
+                <h2>Kit de Onboarding para Clientes</h2>
+                <p>Material oficial para entregar a los clientes durante el proceso de integración. Envía la documentación técnica, manuales y accesos según la fase del proyecto.</p>
+            </div>
+
+            <div class="kit-grid">
+                <div class="kit-card">
+                    <div class="kit-card-icon">📘</div>
+                    <h4>Catálogo Funcional de APIs</h4>
+                    <p>Catálogo comercial para explicarle al cliente qué hace cada API de Starken sin tecnicismos.</p>
+                    <a href="https://dzmsfxnvfardckddvzjt.supabase.co/storage/v1/object/public/onboarding_kit/Flujo_Funcional_APIs_Starken.pdf" download class="kit-download-btn" target="_blank">⬇ Descargar PDF</a>
+                </div>
+                
+                <div class="kit-card">
+                    <div class="kit-card-icon">📗</div>
+                    <h4>Diccionario de Homologación</h4>
+                    <p>Mapeo oficial de estados logísticos (Starken vs Cliente). Vital para la trazabilidad.</p>
+                    <a href="https://dzmsfxnvfardckddvzjt.supabase.co/storage/v1/object/public/onboarding_kit/Diccionario_Homologacion_Starken.pdf" download class="kit-download-btn" target="_blank">⬇ Descargar Documento</a>
+                </div>
+
+                <div class="kit-card">
+                    <div class="kit-card-icon">📙</div>
+                    <h4>Manual Operativo KAM</h4>
+                    <p>Guía de roles y responsabilidades. Útil para recordar cómo funciona el proceso internamente.</p>
+                    <a href="https://dzmsfxnvfardckddvzjt.supabase.co/storage/v1/object/public/onboarding_kit/Manual_KAM_Integraciones.pdf" download class="kit-download-btn" target="_blank">⬇ Descargar PDF</a>
+                </div>
+
+                <div class="kit-card">
+                    <div class="kit-card-icon">📊</div>
+                    <h4>Matriz RACI</h4>
+                    <p>Gobernanza del modelo de integraciones. Quién hace qué, quién aprueba y quién es informado.</p>
+                    <a href="https://dzmsfxnvfardckddvzjt.supabase.co/storage/v1/object/public/onboarding_kit/Matriz_RACI_Integraciones.pdf" download class="kit-download-btn" target="_blank">⬇ Descargar PDF</a>
+                </div>
+
+                <div class="kit-card">
+                    <div class="kit-card-icon">💻</div>
+                    <h4>Portal de Desarrolladores</h4>
+                    <p>Sitio técnico con los Swagger y endpoints para el equipo TI del cliente.</p>
+                    <a href="https://developers.starken.cl" target="_blank" class="kit-copy-btn">↗ Abrir Portal</a>
+                </div>
+
+                <div class="kit-card">
+                    <div class="kit-card-icon">✉️</div>
+                    <h4>Soporte Integraciones TI</h4>
+                    <p>Canal oficial para que el TI del cliente reporte errores 500, timeouts o problemas de token.</p>
+                    <button onclick="navigator.clipboard.writeText('integraciones@starken.cl'); alert('Correo copiado al portapapeles')" class="kit-copy-btn">📋 Copiar Correo</button>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Modal Detalles -->
+    <div class="modal-overlay" id="modal-initiative">
+        <div class="modal-box">
+            <div class="modal-header">
+                <div>
+                    <h2 id="modal-init-title">Detalle de Iniciativa</h2>
+                    <div id="modal-init-client" style="font-size: 0.85rem; color: var(--text-secondary); margin-top: 2px;"></div>
+                </div>
+                <button class="modal-close" id="btn-close-init-modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div id="modal-bottleneck" class="bottleneck-text" style="margin-bottom: 1.5rem; display: none;"></div>
+                
+                <h3 style="font-size: 0.95rem; font-weight: 600; margin-bottom: 1rem; border-bottom: 1px solid var(--border); padding-bottom: 0.5rem;">Bitácora de Avance</h3>
+                <div class="log-list" id="logs-container">
+                    <!-- Logs Inyectados -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="app.js"></script>
+</body>
+</html>
